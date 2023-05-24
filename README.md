@@ -1,4 +1,4 @@
-![Voltage Logo](https://ibb.co/3p8dX2z)
+![Voltage Logo](https://github-images.dang116.repl.co/voltage_Bot_23.png)
 
 # Voltage-Bot-23 - Source Code
 Voltage is running on the library [discord.py](https://discordpy.readthedocs.io/en/stable/)
@@ -23,3 +23,4 @@ All the code saved to this repo has been updated and will work with diferent pac
 
 # Dashboard
 🔗 [Click Here](https://voltage.dang1114.repl.co/)
+🔗 [Invite](https://discord.com/oauth2/authorize?client_id=919233281235509268&permissions=10000931089606&scope=bot)
