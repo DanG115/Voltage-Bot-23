@@ -1,16 +1,39 @@
-#-----------------------========= Imports -----------------------=========#
-
+#import 
+import os
 import discord
-from discord.ext import commands
-import json
+import re
+import datetime
 import random
+import json
+import tasks 
+from dotenv import load_dotenv
+from webserver import keep_alive
+
+
+#from...
+
+from discord.ext import commands
+from discord.ext.commands import has_permissions, MissingPermissions
 from discord.utils import find
-import asyncio
-from discord.ui import Select, View
+from discord.utils import get
+import discord
+import discord.ext
+from discord.utils import get
+from discord.ext import commands, tasks
+from discord.ext.commands import has_permissions,  CheckFailure, check
+
 import os
 import datetime
 
-from dotenv import load_dotenv
+
+from discord_slash import SlashCommand
+from discord_slash import SlashContext
+from discord_slash.utils import manage_commands
+
+#-----------------------========= Imports -----------------------=========#
+
+
+
 
 load_dotenv()
 
@@ -27,7 +50,7 @@ client = commands.Bot(intents=discord.Intents.all(),
                       command_prefix=(get_prefix))
 client.remove_command("help")
 
-players = {}
+
 
 #-----------------------========= Bot Status -----------------------=========#
 LISTENING = ['Memes', 'Spotify', 'Spam', 'Dms']
@@ -48,14 +71,6 @@ PRESENCELISTS = ['LISTENING', 'PLAYING', 'WATCHING']
 PRESENCE = random.choice(PRESENCELISTS)
 
 
-##@client.event
-##async def on_member_join(member):
-  
-  ##role = discord.utils.get(member.guild.roles, name='Member')
-  ##await member.add_roles(role)
-
-
-
 @client.event
 async def on_ready():
   print('Voltage 2.2')
@@ -65,10 +80,10 @@ async def on_ready():
   await client.change_presence(
     activity=discord.Activity(type=ACTIVITYTYPE[PRESENCE],
                               name=(random.choice(globals()[PRESENCE]) +
-                                    ' | v!setup')))
+                                    ' | /setup')))
 
 
-#-----------------------========= Prefix -----------------------=========#
+#-----------------------========= Prefix -----------------------=========
 
 
 @client.command(pass_context=True)
@@ -95,6 +110,102 @@ async def prefix_error(ctx, error):
 #prefix end
 
 
+
+
+#-----------------------========= Slash CMDS -----------------------=========#
+slash = SlashCommand(client, sync_commands=True)
+
+#Send message "pong" when user sends /ping
+@slash.slash(name="ping", description="Ping Pong")
+async def _ping(ctx: SlashContext):
+	await ctx.send(content="pong!")
+
+@slash.slash(name="setup", description = "Setup Voltage")
+async def _setup(ctx):
+  embed = discord.Embed(title="Select an option",
+                        description="Choose one of the following options",
+                        color=0x00ff00)
+  # Add the options as fields to the embed
+  embed.timestamp = datetime.datetime.now()
+  embed.add_field(name="⚙️ Prefix Setup ⚙️",
+                  value="Setup your custom server prefix!",
+                  inline=False)
+  embed.add_field(name="❗ Help Command ❗",
+                  value="Use this command anytime!",
+                  inline=False)
+  embed.set_footer(text="React with 🗑️ to clear this message")
+  # Send the embed as a message
+  msg = await ctx.send(embed=embed)
+  # Add reaction buttons for the options
+  await msg.add_reaction("⚙️"
+                         )  # Unicode for Regional Indicator Symbol Letter A
+  await msg.add_reaction("❗")  # Unicode for Regional Indicator Symbol Letter A
+  await msg.add_reaction("🗑️")
+
+  # Wait for the user's reaction
+  def check(reaction, user):
+    return user == ctx.author and str(reaction.emoji) in ["⚙️", "❗", "🗑️"]
+
+  reaction, user = await client.wait_for("reaction_add", check=check)
+  # Respond based on the user's selection
+  if str(reaction.emoji) == "⚙️":
+    embed = discord.Embed(title="Setup - Prefix",
+                          description="Set your server prefix!",
+                          color=discord.Color.from_rgb(0, 255, 50))
+    embed.add_field(
+      name="Set Prefix",
+      value=
+      "All you have to type is\n `v!prefix newprefix`\n Once set you should see a message that informs you of the change.  ",
+      inline=False)
+
+    await msg.edit(embed=embed)
+
+  if str(reaction.emoji) == "❗":
+    embed = discord.Embed(title="Setup - Help Cmd",
+                          description="Help Command!",
+                          color=discord.Color.from_rgb(0, 255, 50))
+    embed.add_field(
+      name="Help",
+      value=
+      "You can use this command to assist all the time! If you need help use\n`v!help`",
+      inline=False)
+
+    await msg.edit(embed=embed)
+
+  if str(reaction.emoji) == "🗑️":
+    await msg.delete()
+    await ctx.send("Setup Menu Deleted")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Space given text by user
+@slash.slash(name="space", description="Space your text", options=[manage_commands.create_option( #create an arg
+    name = "text", #Name the arg as "text"
+    description = "The text to space", #Describe arg
+    option_type = 3, #option_type 3 is string
+    required = True #Make arg required
+  )])
+async def _space(ctx: SlashContext, sentence):
+	newword = "" #define new sentence
+	for char in sentence: #For each character in given sentence
+		newword = newword + char + "   " #Add to new sentence  with space
+	await ctx.send(content=newword) #send mew sentence
+
+
+
 #-----------------------========= On join server -----------------------=========#
 @client.event
 async def on_guild_join(guild):
@@ -112,7 +223,7 @@ async def on_guild_join(guild):
         title="**======== *Thanks For Adding Me!* ========**",
         description=f"""
         Thanks for adding me to {guild.name}!
-        You can use the `v!setup` command to get started!
+        You can use the `/setup` command to get started!
         """,
         color=0xd89522)
       await general.send(embed=embed)
@@ -123,72 +234,17 @@ async def on_guild_join(guild):
 
 
 
-@client.command()
-async def setup(ctx):
-  embed = discord.Embed(title="Select an option",
-                        description="Choose one of the following options",
-                        color=0x00ff00)
-  
-  embed.timestamp = datetime.datetime.now()
-  embed.add_field(name="⚙️ Prefix Setup ⚙️",
-                  value="Setup your custom server prefix!",
-                  inline=False)
-  embed.add_field(name="❗ Help Command ❗",
-                  value="Use this command anytime!",
-                  inline=False)
-  embed.set_footer(text="React with 🗑️ to clear this message")
-  
-  msg = await ctx.send(embed=embed)
 
-  await msg.add_reaction("⚙️"
-                         )  
-  await msg.add_reaction("❗")  
-  await msg.add_reaction("🗑️")
-
-  # Wait for the user's reaction
-  def check(reaction, user):
-    return user == ctx.author and str(reaction.emoji) in ["⚙️", "❗", "🗑️"]
-
-  reaction, user = await client.wait_for("reaction_add", check=check)
-  # Respond based on the user's selection
-  if str(reaction.emoji) == "⚙️":
-    embed = discord.Embed(title="Setup - Prefix",
-                          description="Set your server prefix!",
-                          color=discord.Color.from_rgb(0, 255, 50))
-    embed.add_field(
-      name="Set Prefix",
-      value=
-      "All you have to type is\n `v!prefix [newprefix]`\n Once set you should see a message that informs you of the change.  ",
-      inline=False)
-
-    await msg.edit(embed=embed)
-
-  if str(reaction.emoji) == "❗":
-    embed = discord.Embed(title="Setup - Help Cmd",
-    description="Help Command!",
-    color=discord.Color.from_rgb(0, 255, 50))
-    embed.add_field(
-      name="Help",
-      value=
-      "You can use this command to assist all the time! If you need help use\n`v!help`",
-      inline=False)
-
-    await msg.edit(embed=embed)
-
-  if str(reaction.emoji) == "🗑️":
-    await msg.delete()
-    await ctx.send("Setup Menu Deleted")
+ 
 
 
 #-----------------------========= Help Pannels -----------------------=========#
-
-
-@client.group(invoke_without_command=True)
-async def help(ctx):
+@slash.slash(name = "help", description = "Help Command")
+async def _help(ctx):
   em = discord.Embed(
     title="Help Pannel",
     description=
-    "v!<category> for extended infomation on that category.\n **All Help commands are displayed with the default prefix!**",
+    "/<category> for extended infomation on that category.\n **All Help commands are displayed with the default prefix!**\n*Slash Commands are being added*",
     color=0xd10a07)
 
   em.add_field(name="👮 Moderation 👮", value="Use `v!modhelp`")
@@ -197,6 +253,8 @@ async def help(ctx):
   em.add_field(name="⚙️ Settings ⚙️", value="Use `v!settingshelp`")
 
   await ctx.send(embed=em)
+  
+
 
 
 @client.group(invoke_without_command=True,
@@ -296,6 +354,7 @@ async def slowmode(ctx):
 
 
 #-----------------------========= Entertainement Commands -----------------------=========#
+
 @client.command()
 async def ping(ctx):
   await ctx.send(f'Pong! {round(client.latency * 1000)}ms 🏓')
@@ -454,6 +513,8 @@ async def clear(ctx, amount: int):
 #-----------------------========= Command Errors -----------------------=========#
 
 
+
+
 @prefix.error
 async def prefix_error(ctx, error):
   if isinstance(error, commands.MissingRequiredArgument):
@@ -482,6 +543,6 @@ async def slowmode_error(ctx, error):
     await ctx.send('Please specify the slowmode wait time (in secs)')
 
 
-
-token = os.environ['DISCORD_TOKEN']
+keep_alive()
+token = os.environ['DISCORD_BOT_TOKEN']
 client.run(token)
