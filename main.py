@@ -1,4 +1,6 @@
-#import 
+#-----------------------========= Imports -----------------------=========#
+
+
 import os
 import discord
 import re
@@ -7,10 +9,8 @@ import random
 import json
 import tasks 
 from dotenv import load_dotenv
+
 from webserver import keep_alive
-
-
-#from...
 
 from discord.ext import commands
 from discord.ext.commands import has_permissions, MissingPermissions
@@ -22,24 +22,14 @@ from discord.utils import get
 from discord.ext import commands, tasks
 from discord.ext.commands import has_permissions,  CheckFailure, check
 
-import os
-import datetime
-
 
 from discord_slash import SlashCommand
 from discord_slash import SlashContext
 from discord_slash.utils import manage_commands
 
-#-----------------------========= Imports -----------------------=========#
-
-
-
 
 load_dotenv()
-
-
 #-----------------------========= Prefix -----------------------=========#
-#prefix beginning
 def get_prefix(client, message):
   with open('prefixes.json', 'r') as f:
     prefixes = json.load(f)
@@ -73,7 +63,7 @@ PRESENCE = random.choice(PRESENCELISTS)
 
 @client.event
 async def on_ready():
-  print('Voltage 2.2')
+  print('Voltage 2.5')
   print('Logged in as: ' + client.user.name)
   print('Client User ID: ' + str(client.user.id))
 
@@ -107,11 +97,6 @@ async def prefix_error(ctx, error):
     )
 
 
-#prefix end
-
-
-
-
 #-----------------------========= Slash CMDS -----------------------=========#
 slash = SlashCommand(client, sync_commands=True)
 
@@ -119,6 +104,10 @@ slash = SlashCommand(client, sync_commands=True)
 @slash.slash(name="ping", description="Ping Pong")
 async def _ping(ctx: SlashContext):
 	await ctx.send(content="pong!")
+        
+        
+#-----------------------========= Setup -----------------------=========###
+
 
 @slash.slash(name="setup", description = "Setup Voltage")
 async def _setup(ctx):
@@ -177,20 +166,6 @@ async def _setup(ctx):
     await ctx.send("Setup Menu Deleted")
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Space given text by user
 @slash.slash(name="space", description="Space your text", options=[manage_commands.create_option( #create an arg
     name = "text", #Name the arg as "text"
@@ -203,7 +178,6 @@ async def _space(ctx: SlashContext, sentence):
 	for char in sentence: #For each character in given sentence
 		newword = newword + char + "   " #Add to new sentence  with space
 	await ctx.send(content=newword) #send mew sentence
-
 
 
 #-----------------------========= On join server -----------------------=========#
@@ -229,13 +203,6 @@ async def on_guild_join(guild):
       await general.send(embed=embed)
 
 
-#-----------------------========= Setup -----------------------=========###
-
-
-
-
-
- 
 
 
 #-----------------------========= Help Pannels -----------------------=========#
