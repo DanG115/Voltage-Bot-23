@@ -105,7 +105,7 @@ slash = SlashCommand(client, sync_commands=True)
 async def _ping(ctx: SlashContext):
 	await ctx.send(content="pong!")
         
-        
+
 #-----------------------========= Setup -----------------------=========###
 
 
@@ -323,6 +323,11 @@ async def slowmode(ctx):
 #-----------------------========= Entertainement Commands -----------------------=========#
 
 @client.command()
+async def random(ctx):
+  await ctx.send("Hi")
+
+  
+@client.command()
 async def ping(ctx):
   await ctx.send(f'Pong! {round(client.latency * 1000)}ms 🏓')
 
@@ -512,4 +517,4 @@ async def slowmode_error(ctx, error):
 
 keep_alive()
 token = os.environ['DISCORD_BOT_TOKEN']
-client.run(token)
+client.run(token) 
