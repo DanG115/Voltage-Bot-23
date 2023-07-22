@@ -1,7 +1,7 @@
 ![Voltage Logo](https://github-images.dang116.repl.co/voltage_Bot_23.png)
 
-# Discord bot - Moderation Template
-This template will run on [discord.py](https://discordpy.readthedocs.io/en/stable/)
+# Voltage - Discord Mod Bot
+Voltage runs on [discord.py](https://discordpy.readthedocs.io/en/stable/) (Python Library)
 You can visit the dashboard with the link below...
 All the code saved to this repo has been updated and will work with these packages installed:
 
