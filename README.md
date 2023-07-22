@@ -7,17 +7,17 @@ All the code saved to this repo has been updated and will work with these packag
 
 
 - 🔗 [discord.py](https://discordpy.readthedocs.io/en/stable/)
-Discord-Slash-command
-Asyncio
-Datetime
-JSON
-OS
-Discord.ext / Commands
-Dotenv
-Dscord.utils
-Dscord.ui
-Random
-Find
+- Discord-Slash-command
+- Asyncio
+- Datetime
+- JSON
+- OS
+- Discord.ext / Commands
+- Dotenv
+- Dscord.utils
+- Dscord.ui
+- Random
+- Find
 
 # Dashboard
 🔗 [Click Here](https://voltage.dang1114.repl.co)
