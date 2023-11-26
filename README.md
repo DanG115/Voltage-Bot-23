@@ -1,5 +1,7 @@
 ![Voltage Logo](https://github-images.dang116.repl.co/voltage_Bot_23.png)
 
+*PROJECT TERMINATED*
+
 # Voltage - Discord Mod Bot
 Voltage runs on [discord.py](https://discordpy.readthedocs.io/en/stable/) (Python Library)
 You can visit the dashboard with the link below...
